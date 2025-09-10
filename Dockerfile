@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy our fixed JAR (always app.jar now)
 COPY --from=build /app/target/app.jar app.jar
 
-EXPOSE 9998
+EXPOSE 33060
 
 ENV SPRING_PROFILES_ACTIVE=prod
 
