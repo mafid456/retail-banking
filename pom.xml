@@ -106,8 +106,8 @@
     </dependencies>
 
     <build>
-      <plugins>
-        <!-- Compiler plugin configured for Java 21 -->
+    <finalName>app</finalName> <!-- forces JAR name to app.jar -->
+    <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -117,7 +117,6 @@
             </configuration>
         </plugin>
 
-        <!-- (Optional) Spring Boot plugin if you're using Spring Boot -->
         <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
@@ -131,5 +130,5 @@
             </executions>
         </plugin>
     </plugins>
-    </build>
+</build>
 </project>
