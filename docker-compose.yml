@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   mysql-standalone:
     image: mysql:8.0
@@ -6,22 +8,28 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=bank
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank
     networks:
       - spring-app-network
 
   spring-app:
-  build:
-    context: .
-    dockerfile: Dockerfile
-  container_name: spring-app
-  ports:
-    - "9998:9998"
-  environment:
-    - SPRING_PROFILES_ACTIVE=docker
-  depends_on:
-    - mysql-standalone
-  networks:
-    - spring-app-network
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-app
+    ports:
+      - "9998:9998"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/bank
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql-standalone
+    networks:
+      - spring-app-network
 
+networks:
+  spring-app-network:
+    driver: bridge
