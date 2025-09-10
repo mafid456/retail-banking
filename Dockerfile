@@ -19,10 +19,11 @@ LABEL org.opencontainers.image.source="https://github.com/ohbus/retail-banking"
 
 WORKDIR /app
 
-COPY --from=build /app/target/retail.banking-1.0.jar .
+# 👇 FIXED: correct filename
+COPY --from=build /app/target/retail-banking-1.0.jar app.jar
 
 EXPOSE 9998
 
 ENV SPRING_PROFILES_ACTIVE=prod
 
-ENTRYPOINT [ "java", "-jar", "retail.banking-1.0.jar" ]
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
