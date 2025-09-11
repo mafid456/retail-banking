@@ -1,64 +1,49 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-21'
-            args '-v /root/.m2:/root/.m2'  // Cache Maven dependencies
-        }
+    agent any
+
+    tools {
+        // Use Maven installed in Jenkins (Manage Jenkins → Tools → Maven installations)
+        maven 'Maven-3.9'
+        jdk 'jdk17'
     }
 
     environment {
-        APP_NAME = "spring-boot-app"
-        DOCKER_IMAGE = "${APP_NAME}:latest"
+        IMAGE_NAME = "retail-banking-app"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/mafid456/retail-banking.git',
-                    credentialsId: 'b921b256-4f38-4a28-9fd1-f6010a954546'   // Jenkins credentials for GitHub PAT
+                git url: 'https://github.com/mafid456/retail-banking.git',
+                    branch: 'master',
+                    credentialsId: 'b921b256-4f38-4a28-9fd1-f6010a954546'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build JAR') {
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
-            agent any   // Switch back to Jenkins host (needs Docker installed)
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                }
             }
         }
 
-        stage('Deploy with Docker Compose') {
-            agent any
+        stage('Run Container') {
             steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
-                
-                // 👉 Optional: branch-based deployment
-                // if (env.BRANCH_NAME == 'dev') {
-                //     sh 'docker-compose -f docker-compose.dev.yml up -d --build'
-                // } else {
-                //     sh 'docker-compose -f docker-compose.prod.yml up -d --build'
-                // }
+                script {
+                    // Stop old container if running
+                    sh """
+                    docker rm -f ${IMAGE_NAME} || true
+                    docker run -d --name ${IMAGE_NAME} -p 8081:8081 ${IMAGE_NAME}:latest
+                    """
+                }
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Deployment successful!"
-        }
-        failure {
-            echo "❌ Deployment failed!"
-        }
-        always {
-            echo "🏁 Pipeline finished."
         }
     }
 }
