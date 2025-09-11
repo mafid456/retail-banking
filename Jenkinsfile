@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Clone your repo
-                git 'https://github.com/your-repo/project.git'
+                git 'https://github.com/mafid456/retail-banking.git'
             }
         }
 
