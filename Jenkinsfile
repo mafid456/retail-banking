@@ -10,7 +10,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/mafid456/retail-banking.git',
                     branch: 'master',
-                    credentialsId: 'b921b256-4f38-4a28-9fd1-f6010a954546'
+                    credentialsId: 'd3458c5c-6909-4e55-bd0e-db9a20ca9253'
             }
         }
 
