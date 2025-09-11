@@ -1,38 +1,48 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-17'
+            args '-v /root/.m2:/root/.m2' // optional: cache Maven dependencies
+        }
+    }
 
     environment {
-        IMAGE_NAME = "retail-banking-app"
+        APP_NAME = 'my-app'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/mafid456/retail-banking.git',
-                    branch: 'master',
-                    credentialsId: 'd3458c5c-6909-4e55-bd0e-db9a20ca9253'
+                // Clone your repo
+                git 'https://github.com/your-repo/project.git'
             }
         }
 
-        stage('Build JAR') {
+        stage('Build') {
             steps {
+                // Run Maven build inside the container
                 sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:latest ."
+                // Build your Docker image using your multi-stage Dockerfile
+                sh 'docker build -t ${APP_NAME} .'
             }
         }
 
-        stage('Run Container') {
+        stage('Docker Run (optional)') {
             steps {
-                sh """
-                docker rm -f ${IMAGE_NAME} || true
-                docker run -d --name ${IMAGE_NAME} -p 8081:8081 ${IMAGE_NAME}:latest
-                """
+                // Run container (for testing)
+                sh 'docker run -d -p 8081:8081 ${APP_NAME}'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished'
         }
     }
 }
