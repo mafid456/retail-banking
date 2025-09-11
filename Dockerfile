@@ -1,32 +1,24 @@
-# Use Eclipse Temurin JDK 21 as build environment
-FROM eclipse-temurin:21-jdk AS build
+# Use official Maven + JDK image for build stage
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy source
+COPY . .
 
-RUN chmod +x mvnw
-RUN ./mvnw dependency:go-offline -B
+# Build without tests
+RUN mvn clean package -DskipTests
 
-# Copy source and build
-COPY src src
-RUN ./mvnw clean package -DskipTests
-
-# -----------------------------
-# Runtime Image
-# -----------------------------
-FROM eclipse-temurin:21-jre
+# --- Runtime image ---
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-# Copy built jar
+# Copy JAR from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose custom port (e.g., 9090)
-EXPOSE 9090
+# Expose application port (change if needed)
+EXPOSE 8081
 
-# Run Spring Boot app on port 9090
-ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=9090"]
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
