@@ -1,10 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        APP_NAME = "spring-boot-app"
+        DOCKER_IMAGE = "${APP_NAME}:latest"
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/mafid456/your-repo.git'
+                // Use GitHub HTTPS + Personal Access Token (PAT)
+                git branch: 'master',
+                    url: 'https://github.com/mafid456/your-',
+                    credentialsId: 'github-creds'   // <-- Add this in Jenkins Credentials
             }
         }
 
@@ -17,19 +25,17 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t spring-boot-app:latest ."
-                }
+                sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
-                // Default deployment
+                // Default compose file
                 sh 'docker-compose down'
                 sh 'docker-compose up -d --build'
-                
-                // 👉 Or use branch-based deployment:
+
+                // 👉 If you want branch-based deployment:
                 // if (env.BRANCH_NAME == 'dev') {
                 //     sh 'docker-compose -f docker-compose.dev.yml up -d --build'
                 // } else {
@@ -45,6 +51,9 @@ pipeline {
         }
         failure {
             echo "❌ Deployment failed!"
+        }
+        always {
+            echo "🏁 Pipeline finished."
         }
     }
 }
