@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Use Maven installed in Jenkins (Manage Jenkins → Tools → Maven installations)
-        maven 'Maven-3.9'
-        jdk 'jdk17'
-    }
-
     environment {
         IMAGE_NAME = "retail-banking-app"
     }
@@ -28,21 +22,16 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
-                }
+                sh "docker build -t ${IMAGE_NAME}:latest ."
             }
         }
 
         stage('Run Container') {
             steps {
-                script {
-                    // Stop old container if running
-                    sh """
-                    docker rm -f ${IMAGE_NAME} || true
-                    docker run -d --name ${IMAGE_NAME} -p 8081:8081 ${IMAGE_NAME}:latest
-                    """
-                }
+                sh """
+                docker rm -f ${IMAGE_NAME} || true
+                docker run -d --name ${IMAGE_NAME} -p 8081:8081 ${IMAGE_NAME}:latest
+                """
             }
         }
     }
