@@ -11,8 +11,8 @@ pipeline {
             steps {
                 // Use GitHub HTTPS + Personal Access Token (PAT)
                 git branch: 'master',
-                    url: 'https://github.com/mafid456/your-',
-                    credentialsId: 'github-creds'   // <-- Add this in Jenkins Credentials
+                    url: 'https://github.com/mafid456/retail-banking.git',
+                    credentialsId: '6458f8e2-dc29-49bd-917d-59904b026f0e'   // <-- Add this in Jenkins Credentials
             }
         }
 
