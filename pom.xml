@@ -26,7 +26,8 @@
     </distributionManagement>
 
     <properties>
-        <java.version>21</java.version>
+        <!-- Changed Java version to 17 -->
+        <java.version>17</java.version>
         <spring-boot.version>3.2.0</spring-boot.version>
         <mysql-connector.version>9.1.0</mysql-connector.version>
         <testcontainers.version>1.20.6</testcontainers.version>
@@ -106,29 +107,30 @@
     </dependencies>
 
     <build>
-    <finalName>app</finalName> <!-- forces JAR name to app.jar -->
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.11.0</version>
-            <configuration>
-                <release>21</release>
-            </configuration>
-        </plugin>
+        <finalName>app</finalName> <!-- forces JAR name to app.jar -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <!-- Changed release version to 17 -->
+                    <release>17</release>
+                </configuration>
+            </plugin>
 
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>3.3.4</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>repackage</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
