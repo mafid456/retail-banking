@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-21'
+            args '-v /root/.m2:/root/.m2'  // Cache Maven dependencies
+        }
+    }
 
     environment {
         APP_NAME = "spring-boot-app"
@@ -9,10 +14,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Use GitHub HTTPS + Personal Access Token (PAT)
-                git branch: 'master',
-                    url: 'https://github.com/mafid456/retail-banking.git',
-                    credentialsId: '6458f8e2-dc29-49bd-917d-59904b026f0e'   // <-- Add this in Jenkins Credentials
+                git branch: 'main',
+                    url: 'https://github.com/mafid456/your-repo.git',
+                    credentialsId: '6458f8e2-dc29-49bd-917d-59904b026f0e'   // Jenkins credentials for GitHub PAT
             }
         }
 
@@ -24,18 +28,19 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            agent any   // Switch back to Jenkins host (needs Docker installed)
             steps {
                 sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('Deploy with Docker Compose') {
+            agent any
             steps {
-                // Default compose file
                 sh 'docker-compose down'
                 sh 'docker-compose up -d --build'
-
-                // 👉 If you want branch-based deployment:
+                
+                // 👉 Optional: branch-based deployment
                 // if (env.BRANCH_NAME == 'dev') {
                 //     sh 'docker-compose -f docker-compose.dev.yml up -d --build'
                 // } else {
