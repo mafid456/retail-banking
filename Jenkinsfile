@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/mafid456/retail-banking.git'
+                git branch: 'main', url: 'https://github.com/mafid456/your-repo.git'
             }
         }
 
@@ -14,7 +14,6 @@ pipeline {
                 sh './mvnw clean package -DskipTests'
             }
         }
-
 
         stage('Build Docker Image') {
             steps {
@@ -26,13 +25,16 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                // For default docker-compose.yml
+                // Default deployment
                 sh 'docker-compose down'
                 sh 'docker-compose up -d --build'
                 
-                // 👉 If you want environment-based:
-                // sh 'docker-compose -f docker-compose.dev.yml up -d --build'
-                // sh 'docker-compose -f docker-compose.prod.yml up -d --build'
+                // 👉 Or use branch-based deployment:
+                // if (env.BRANCH_NAME == 'dev') {
+                //     sh 'docker-compose -f docker-compose.dev.yml up -d --build'
+                // } else {
+                //     sh 'docker-compose -f docker-compose.prod.yml up -d --build'
+                // }
             }
         }
     }
