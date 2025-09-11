@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     url: 'https://github.com/mafid456/retail-banking.git',
                     credentialsId: 'b921b256-4f38-4a28-9fd1-f6010a954546'   // Jenkins credentials for GitHub PAT
             }
