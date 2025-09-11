@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/mafid456/your-repo.git'
+                git branch: 'master', url: 'https://github.com/mafid456/retail-banking.git'
             }
         }
 
